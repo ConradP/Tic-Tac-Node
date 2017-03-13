@@ -1,0 +1,8 @@
+.col-xs-4{
+	text-align: center;
+	height: 33vh;
+	border-style :solid;
+	border-color :black;
+	border-width: 2px 2px 2px 2px;
+}
+
