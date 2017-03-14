@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
 	<title>Tic-Tac-Toe.js</title>
 </head>
 <body>
@@ -14,7 +15,7 @@
 		<div id="modal" class ="modal fade" role="dialog">
 			<div class="modal-dialog">
 				<div class="modal-content">
-				<div class="modal-body">
+				<div class="modal-body" id="modal-body">
 					<!-- this modal functions as a menu window -->
 				</div>
 				</div>
@@ -38,6 +39,6 @@
 	</div>
 
 
-
+<script src="./app.js"></script>
 </body>
 </html>
