@@ -6,6 +6,8 @@ var StateMachine = require('javascript-state-machine');
 var roomno = 1;
 var userQue = [];
 
+
+//initialize the server
 app.use(express.static(__dirname));
 
 app.get('/', function(req,res){
@@ -32,7 +34,8 @@ io.on('connection',function(socket){
 	});
 });
 
-
+// create the statemachine to represent the game state
+// TODO: abstract out of the server for cleaner code
 var game = StateMachine.create({
 	initial: 'matchmaking',
 	events:[
