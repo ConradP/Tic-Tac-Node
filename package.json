@@ -1,0 +1,24 @@
+{
+  "name": "tic_tac_toe",
+  "version": "1.0.0",
+  "description": "multiplayer tic_tac_toe built with nodejs",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/ConradP/Tic-Tac-Toe.git"
+  },
+  "author": "Conrad Pinnow",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/ConradP/Tic-Tac-Toe/issues"
+  },
+  "homepage": "https://gitlab.com/ConradP/Tic-Tac-Toe#README",
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^1.7.3"
+  }
+}
