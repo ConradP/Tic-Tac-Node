@@ -2,8 +2,8 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var StateMachine = require('javascript-state-machine');
 var roomno = 1;
-
 var userQue = [];
 
 app.use(express.static(__dirname));
@@ -30,20 +30,39 @@ io.on('connection',function(socket){
 	socket.on('disconnect',function(){
 		console.log('user disconnected');
 	});
-
-	
 });
 
 
+var game = StateMachine.create({
+	initial: 'matchmaking',
+	events:[
+	{name:'match',        from: 'matchmaking', to:'game'   	    },
+	{name:'turnComplete', from:'game',         to:'game'        },
+	{name:'gameOver',     from:'game',         to:'gameOverview'},
+	{name:'rematch',      from:'gameOverview', to:'matchmaking' }
+	],
+	
+	callbacks:{
+		onmatchmaking : matchMakingHandler,
+		ongame: gameHandler,
+		ongameOverview: gameOverviewHandler,
+	}
+});
 
+function matchMakingHandler(event,from,to,msg){
+	//if there are two or more people looking for a match
+		//match them and event:match
+	//else
+		//wait for more people to join
+}
 
+function gameHandler(event,from,to,msg){
+	//if the game is over event:gameOver
+	//switch active player
+	//wait for active player input, then EVENT:turnComplete
+}
 
-//function removeFromQue(player)
-//{
-//	index = userQue.indexOf(player);
-//	if (index>=0)
-//	{
-//		userQue.splice(index,1);
-//		console.log('removing a user from the que');
-//	}
-//}
+function gameOverviewHandler(event,from,to,msg){
+	//display if the player won or lost
+	//event:rematch
+}
