@@ -3,6 +3,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var lobby = [];
+var game = require('./game.js');
 
 //initialize the server
 app.use(express.static(__dirname));
@@ -25,7 +26,7 @@ io.on('connection',function(socket){
 		player1 = lobby[0];
 		player2 = lobby[1];
 		console.log('pairing two players and removing from the que');
-		startGame(player1,player2);
+		game.newGame(player1,player2);
 		lobby.splice(lobby.indexOf(player1),1);
 		lobby.splice(lobby.indexOf(player2),1);
 	}
@@ -40,29 +41,8 @@ io.on('connection',function(socket){
 
 	socket.on('player move',function(data){
 			console.log(data);
-	})
+	});
 });
-
-
-function startGame(player1,player2){
-	player1.on('disconnect', function(){
-		_modalNotify(player2,'player disconnected');
-	});
-	player2.on('disconnect',function(){
-		_modalNotify(player1,'player disconnected');
-	});
-
-	var active_player = player1;
-	function togglePlayer(){
-		if (active_player == player1)
-		{
-			active_player = player2;
-		}
-		else{
-			active_player = player1;
-		}
-	}
-}
 
 function _modalNotify(socket,msg){
 	socket.emit('update modal',msg);

@@ -1,44 +1,68 @@
 var socket = io();
 
-
+//displays a message in the modal menu sent from the server
 socket.on('update modal',function(msg){
-	updateModal(msg);
-	showModal();
+	_updateModal(msg);
+	_showModal();
 });
-
+//hides the modal display when istructed to by the server
 socket.on('disable modal',function(){
-	hideModal();
+	_hideModal();
 });
-
+//notifies the server when the client has disconnected
 socket.on('disconnect',function(){
-	updateModal('dsconnected from the server');
-	showModal();
+	_updateModal('dsconnected from the server');
+	_showModal();
+});
+//updates the proper board space with the proper icon when instructed to by the server
+socket.on('update board',function(id,icon){
+	$(id).append($('<img src="'+icon+'">'));
+});
+//enable player to make a move on the board
+socket.on('enable board',function(){
+	_enableBoard();
+});
+//disable player from making moves on the board
+socket.on('disable board',function(){
+	_disableBoard();
 });
 
 
 
-function updateModal(msg){
+
+
+
+
+
+
+
+
+/* private function definitions*/
+function _updateModal(msg){
 	$('#modal-body').empty();
 	$('#modal-body').append(msg+'<br>');
 }
 
-function showModal(){
+function _showModal(){
 $('#modal').modal('show');
 }
 
-function hideModal(){
+function _hideModal(){
 $('#modal').modal('hide');
 }
 
-function enableBoard(){
-	$('.board_space').bind('click',function(){
-		socket.emit('player move',$(this).prop('id'));
-	});
+var _moveHandler = function(){
+	socket.emit('player move',$(this).prop('id'));
 };
 
-function disableBoard(){
-	$('.board_space').unbind();
+function _enableBoard(){
+	$('.board_space').bind('click', _moveHandler);
+};
+
+function _disableBoard(){
+	$('.board_space').unbind('click',_moveHandler);
 }
+
 
 
 
