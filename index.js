@@ -3,7 +3,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var lobby = [];
-var game = require('./game.js');
+var tictac = require('./game.js');
 
 //initialize the server
 app.use(express.static(__dirname));
@@ -26,7 +26,7 @@ io.on('connection',function(socket){
 		player1 = lobby[0];
 		player2 = lobby[1];
 		console.log('pairing two players and removing from the que');
-		game.newGame(player1,player2);
+		var game = tictac.newGame(player1,player2);
 		lobby.splice(lobby.indexOf(player1),1);
 		lobby.splice(lobby.indexOf(player2),1);
 	}

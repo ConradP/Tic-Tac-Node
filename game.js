@@ -7,37 +7,75 @@ module.exports = (function(){
 		console.log('constructing a new game');
 		this.player1 = player1;
 		this.player2 = player2;
+		var player1_token = 'X_icon.png';
+		var player2_token = 'O_icon.png';
 		var fsm = require('javascript-state-machine').create({
-			initial: 'matchmaking',
+			initial: 'initialize',
 			events:[
 			{name:'begin',from:'initialize',to :'player_1_turn'},
 			{name:'player_1_turn_complete', from:'player_1_turn', to:'player_2_turn'},
+			{name:'player_2_turn_complete',from:'player_2_turn',to:'player_1_turn'},
 			{name:'game_over',from:['player_1_turn','player_2_turn'] ,to:'game_overview'},
 			{name:'rematch',from:'game_overview', to:'initialize' },
-			]});
-		fsm.onplayer_1_turn = function(){
-	//check for end game condition
-	//disable player2's board
-	//enable player1's board
-	//set input callback for player1
+			],
+			callbacks:{
+				oninitialize: initializeHandler,
+				onplayer_1_turn: player_1_turnHandler,
+				onplayer_2_turn: player_2_turnHandler,
+				ongame_overview: game_overviewHandler,
+			}
+		});
+		function player_1_turnHandler(event,from,to){
+			console.log('player_1_turnHandler')
+			//check for end game condition
+			//disable player2's board
+			player2.emit('disable board');
+			player2.emit('update modal','waiting for player 1');
+			//enable player1's board
+			player1.emit('enable board');
+			player1.emit('disable modal');
+			//set input callback for player1
+			player1.on('player move',function(spot){
+				player1.emit('update board','\'#'+spot+'\'',player1_token);
+				player2.emit('update board','\'#'+spot+'\'',player1_token);
+				fsm.player_1_turn_complete();
+			})
 		}
 
-		fsm.onplayer_2_turn = function(){
+		function player_2_turnHandler(){
+			console.log('player_2_turnHandler')
 			//check for end game condition
 			//disable player1's board
+			player1.emit('disable board');
+			player1.emit('update modal','waiting for player 2');
 			//enable player2's board
+			player2.emit('enable board');
+			player2.emit('disable modal');
+			//set input callback for player2
+			player2.on('player move',function(spot){
+				player1.emit('update board','\'#'+spot+'\'',player2_token);
+				player2.emit('update board','\'#'+spot+'\'',player2_token);
+				fsm.player_2_turn_complete();
+			})
 		}
 
-		fsm.ongame_overview = function(winner,loser){
+		function game_overviewHandler(winner,loser){
+			console.log('game_overviewHandler')
 			//update modal display for winner
 			//update modal display for loser
 			//ask for rematch
 		}
 
-		fsm.oninitialize = function(){
-			//
+		function initializeHandler(){
+			console.log('initialize handler');
+			player1.emit('clear board');
+			player2.emit('clear board');
+			this.begin();
 		}
 
+		var board = [[0,0,0],
+					 [0,0,0],
+					 [0,0,0]]
 }
 
 return{

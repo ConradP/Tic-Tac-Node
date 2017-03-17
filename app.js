@@ -27,6 +27,10 @@ socket.on('disable board',function(){
 	_disableBoard();
 });
 
+socket.on('clear board', function(){
+	_clearBoard();
+})
+
 
 
 
@@ -63,6 +67,9 @@ function _disableBoard(){
 	$('.board_space').unbind('click',_moveHandler);
 }
 
+function _clearBoard(){
+	$('.board_space').empty();
+}
 
 
 
