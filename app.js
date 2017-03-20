@@ -16,7 +16,8 @@ socket.on('disconnect',function(){
 });
 //updates the proper board space with the proper icon when instructed to by the server
 socket.on('update board',function(id,icon){
-	$(id).append($('<img src="'+icon+'">'));
+	console.log('update board event fired: ' + id + '   ' +icon);
+	$('#'+id).append($('<img src="'+icon+'">'));
 });
 //enable player to make a move on the board
 socket.on('enable board',function(){

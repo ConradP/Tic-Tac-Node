@@ -9,6 +9,7 @@ module.exports = (function(){
 		this.player2 = player2;
 		var player1_token = 'X_icon.png';
 		var player2_token = 'O_icon.png';
+		var board = [0,0,0,0,0,0,0,0,0];
 		var fsm = require('javascript-state-machine').create({
 			initial: 'initialize',
 			events:[
@@ -28,11 +29,23 @@ module.exports = (function(){
 
 		//set callbacks for player input
 		player1.on('player move',function(spot){
+			if(board[spot]==0)
+			{
+				board[spot] =1;
+				player1.emit('update board',spot,player1_token);
+				player2.emit('update board', spot,player1_token);
 				fsm.player_1_turn_complete();
+			}
 			});
 
 		player2.on('player move',function(spot){
+			if(board[spot]==0)
+			{
+				board[spot]=2;
+				player2.emit('update board',spot,player2_token);
+				player1.emit('update board',spot,player2_token);
 				fsm.player_2_turn_complete();
+			}
 			})
 
 		function player_1_turnHandler(){
@@ -44,9 +57,7 @@ module.exports = (function(){
 			//enable player1's board
 			player1.emit('enable board');
 			player1.emit('disable modal');
-			console.dir(this.current);
-			//set input callback for player1
-			
+			console.dir(this.current);		
 		}
 
 		function player_2_turnHandler(){
@@ -59,8 +70,6 @@ module.exports = (function(){
 			player2.emit('enable board');
 			player2.emit('disable modal');
 			console.dir(this.current);
-			//set input callback for player2
-			
 		}
 
 		function game_overviewHandler(winner,loser){
@@ -76,10 +85,6 @@ module.exports = (function(){
 			player2.emit('clear board');
 			this.begin();
 		}
-
-		var board = [[0,0,0],
-					 [0,0,0],
-					 [0,0,0]]
 }
 
 return{
