@@ -38,10 +38,6 @@ io.on('connection',function(socket){
 			lobby.splice(lobby.indexOf(socket),1);
 		}
 	});
-
-	socket.on('player move',function(data){
-			console.log(data);
-	});
 });
 
 function _modalNotify(socket,msg){

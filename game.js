@@ -25,7 +25,17 @@ module.exports = (function(){
 				ongame_overview: game_overviewHandler,
 			}
 		});
-		function player_1_turnHandler(event,from,to){
+
+		//set callbacks for player input
+		player1.on('player move',function(spot){
+				fsm.player_1_turn_complete();
+			});
+
+		player2.on('player move',function(spot){
+				fsm.player_2_turn_complete();
+			})
+
+		function player_1_turnHandler(){
 			console.log('player_1_turnHandler')
 			//check for end game condition
 			//disable player2's board
@@ -34,12 +44,9 @@ module.exports = (function(){
 			//enable player1's board
 			player1.emit('enable board');
 			player1.emit('disable modal');
+			console.dir(this.current);
 			//set input callback for player1
-			player1.on('player move',function(spot){
-				player1.emit('update board','\'#'+spot+'\'',player1_token);
-				player2.emit('update board','\'#'+spot+'\'',player1_token);
-				fsm.player_1_turn_complete();
-			})
+			
 		}
 
 		function player_2_turnHandler(){
@@ -51,12 +58,9 @@ module.exports = (function(){
 			//enable player2's board
 			player2.emit('enable board');
 			player2.emit('disable modal');
+			console.dir(this.current);
 			//set input callback for player2
-			player2.on('player move',function(spot){
-				player1.emit('update board','\'#'+spot+'\'',player2_token);
-				player2.emit('update board','\'#'+spot+'\'',player2_token);
-				fsm.player_2_turn_complete();
-			})
+			
 		}
 
 		function game_overviewHandler(winner,loser){

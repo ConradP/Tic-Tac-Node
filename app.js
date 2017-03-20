@@ -11,7 +11,7 @@ socket.on('disable modal',function(){
 });
 //notifies the server when the client has disconnected
 socket.on('disconnect',function(){
-	_updateModal('dsconnected from the server');
+	_updateModal('disconnected from the server');
 	_showModal();
 });
 //updates the proper board space with the proper icon when instructed to by the server
