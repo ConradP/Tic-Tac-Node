@@ -27,7 +27,7 @@ socket.on('enable board',function(){
 socket.on('disable board',function(){
 	_disableBoard();
 });
-
+//clear board upon server request
 socket.on('clear board', function(){
 	_clearBoard();
 })
