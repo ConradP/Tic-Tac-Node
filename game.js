@@ -31,6 +31,8 @@ module.exports = (function(){
 				onplayer_1_win_check: player_1_win_checkHandler,
 				onplayer_2_win_check: player_2_win_checkHandler,
 				oncats_game: cats_gameHandler,
+				onplayer_1_win: player1WinHandler,
+				onplayer_2_win: player2WinHandler,
 			}
 		});
 
@@ -60,12 +62,18 @@ module.exports = (function(){
 		});
 
 		function cats_gameHandler(){
-
+			player2.emit('disable board');
+			player2.emit('update modal','cat\'s game');
+			player1.emit('disable board');
+			player1.emit('update modal','cat\'s game');
 		}
 
 		function player_2_win_checkHandler(){
 			if(winnerCheck(2,board)){
 				fsm.player_2_win();
+			}
+			else if(catCheck(board)){
+				fsm.cats_game();
 			}
 			else{
 				fsm.player_1_active();
@@ -77,7 +85,10 @@ module.exports = (function(){
 			if(winnerCheck(1,board)){
 				fsm.player_1_win();
 			}
-			else{
+			else if(catCheck(board)){
+				fsm.cats_game();
+			}
+			else{	
 				fsm.player_2_active();
 			}
 		};
@@ -98,11 +109,13 @@ module.exports = (function(){
 			active.emit('disable modal');
 		}
 
-		function game_overviewHandler(winner,loser){
-			console.log('game_overviewHandler')
-			//update modal display for winner
-			//update modal display for loser
-			//ask for rematch
+		function game_overviewHandler(){
+			console.log('game over handler');
+			setTimeout(function(){
+				player1.emit('update modal','refresh the browser to play again');
+				player2.emit('update modal','refesh the browser to play again');
+				console.log('timeout function executed!');
+			}, 5000);
 		};
 
 		function initializeHandler(){
@@ -115,20 +128,42 @@ module.exports = (function(){
 		function winnerCheck(player,board){
 			console.log('winnerCheck');
 			//diag 
-			if(board[1]==player && board[5]==player&&board[9]==player) return true;
+			if(board[0]==player && board[4]==player&&board[8]==player) return true;
 			//diag
-			if(board[3]==player && board[5]==player&&board[7]==player) return true;
+			if(board[2]==player && board[4]==player&&board[6]==player) return true;
 			//columns
-			for (var i=0;i<4;i++)
+			for (var i=0;i<3;i++)
 			{
 				if (board[i]==player&&board[i+3]==player&&board[i+6]==player) return true;
 			}
 			//rows
-			for (var i=0;i<9;i+=3){
+			for (var i=0;i<=6;i+=3){
 				if(board[i]==player&&board[i+1]==player&&board[i+2]==player) return true;
 			}
 			console.log('returning false');
 			return false;
+		}
+
+		function catCheck(board){
+			for(var index in board)
+			{
+				if (board[index] == 0) return false;
+			}
+			return true;
+		}
+
+		function player1WinHandler(){
+			player1.emit('disable board');
+			player1.emit('update modal','you won!');
+			player2.emit('disable board');
+			player2.emit('update modal','you lose!');
+		}
+
+		function player2WinHandler(){
+			player2.emit('disable board');
+			player2.emit('update modal','you won!');
+			player1.emit('disable board');
+			player1.emit('update modal','you lose!');
 		}
 	}
 
