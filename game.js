@@ -36,19 +36,23 @@ module.exports = (function(){
 
 		//set callbacks for player input
 		player1.on('player move',function(spot){
-			if(board[spot]==0)
+			console.log('update board event received ' + spot);
+			console.log(board[spot]);
+			if(board[spot-1]==0)
 			{
-				board[spot] =1;
+				board[spot-1] =1;
 				player1.emit('update board',spot,player1_token);
 				player2.emit('update board', spot,player1_token);
 				fsm.player_1_turn_complete();
 			}
+			console.log(board[spot]);
 		});
 
 		player2.on('player move',function(spot){
-			if(board[spot]==0)
+			console.log('update board event received ' + spot);
+			if(board[spot-1]==0)
 			{
-				board[spot]=2;
+				board[spot-1]=2;
 				player2.emit('update board',spot,player2_token);
 				player1.emit('update board',spot,player2_token);
 				fsm.player_2_turn_complete();
@@ -60,46 +64,39 @@ module.exports = (function(){
 		}
 
 		function player_2_win_checkHandler(){
-				if(winnerCheck(player2)){
-					fsm.player_2_win();
-				}
-				else{
-					fsm.player_1_active();
-				}
+			if(winnerCheck(2,board)){
+				fsm.player_2_win();
+			}
+			else{
+				fsm.player_1_active();
+			}
 		};
 		function player_1_win_checkHandler()
 		{
-				if(winnerCheck(player1)){
-					fsm.player_1_win();
-				}
-				else{
-					fsm.player_2_active();
-				}
+			console.log('player_1_win_check');
+			if(winnerCheck(1,board)){
+				fsm.player_1_win();
+			}
+			else{
+				fsm.player_2_active();
+			}
 		};
 
 		function player_1_turnHandler(){
-			console.log('player_1_turnHandler')
-			//check for end game condition
-			//disable player2's board
-			player2.emit('disable board');
-			player2.emit('update modal','waiting for player 1');
-			//enable player1's board
-			player1.emit('enable board');
-			player1.emit('disable modal');
-			console.dir(this.current);		
+			_turnHandler(player1,player2);	
 		};
 
 		function player_2_turnHandler(){
-			console.log('player_2_turnHandler')
-			//check for end game condition
-			//disable player1's board
-			player1.emit('disable board');
-			player1.emit('update modal','waiting for player 2');
-			//enable player2's board
-			player2.emit('enable board');
-			player2.emit('disable modal');
-			console.dir(this.current);
+			_turnHandler(player2,player1);
 		};
+
+		function _turnHandler(active,inactive){
+			console.dir(this);
+			inactive.emit('disable board');
+			inactive.emit('update modal','waiting for other player');
+			active.emit('enable board');
+			active.emit('disable modal');
+		}
 
 		function game_overviewHandler(winner,loser){
 			console.log('game_overviewHandler')
@@ -115,8 +112,23 @@ module.exports = (function(){
 			this.begin();
 		};
 
-		function winnerCheck(player){
-			
+		function winnerCheck(player,board){
+			console.log('winnerCheck');
+			//diag 
+			if(board[1]==player && board[5]==player&&board[9]==player) return true;
+			//diag
+			if(board[3]==player && board[5]==player&&board[7]==player) return true;
+			//columns
+			for (var i=0;i<4;i++)
+			{
+				if (board[i]==player&&board[i+3]==player&&board[i+6]==player) return true;
+			}
+			//rows
+			for (var i=0;i<9;i+=3){
+				if(board[i]==player&&board[i+1]==player&&board[i+2]==player) return true;
+			}
+			console.log('returning false');
+			return false;
 		}
 	}
 
