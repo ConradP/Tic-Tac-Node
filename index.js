@@ -3,7 +3,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var lobby = [];
-var tictac = require('./game.js');
+var tictac = require('./JS/game.js');
 
 //initialize the server
 app.use(express.static(__dirname));
